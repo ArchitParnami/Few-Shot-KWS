@@ -1,0 +1,5 @@
+*.pyc
+*.swp
+*.egg-info/
+data/speech_commands
+scripts/train/few_shot/fewshotspeech/results
