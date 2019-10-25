@@ -7,6 +7,7 @@ import glob
 import random
 import shutil
 
+
 class FewShotSpeechDataDownloader(object):
     def __init__(self, data_url, dest_directory, sample_rate, 
                 clip_duration_ms, speaker_limit, core_split,
@@ -87,16 +88,20 @@ class FewShotSpeechDataDownloader(object):
             tarfile.open(filepath, 'r:gz').extractall(self.dataset_path)
 
     def delete_smaller_files(self):
+        print("Scanning files..")
         keywords = self.get_keywords()
         count = 0
+        total = 0
         for keyword in keywords:
             keyword_wavs = os.path.join(self.dataset_path, keyword, '*.wav')
+            total += len(keyword_wavs)
             for wav_file in sorted(glob.glob(keyword_wavs)):
                 sound, sr = self.load_audio(wav_file, self.desired_samples)
                 if sound.shape[1] != self.desired_samples:
                     os.unlink(wav_file)
                     count += 1
         print("{} smaller files deleted".format(count))
+        print("{} files retained".format(total-count))
     
     def group_by_author(self):
         print("Grouping wave files by author..")
@@ -283,7 +288,7 @@ if __name__ == '__main__':
     speaker_limit = 1000
     core_split = (24,3,3) # (train, val, test)
     unknown_split = (60, 20, 20) # in percentage
-
+    random.seed(42)
     downloader = FewShotSpeechDataDownloader(data_url, dataset_path,
         sample_rate, clip_duration_ms, speaker_limit, core_split, unknown_split)
     downloader.run()
