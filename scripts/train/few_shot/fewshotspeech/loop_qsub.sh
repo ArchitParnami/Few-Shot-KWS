@@ -6,8 +6,8 @@ do
 	for way in  2 2 3 4
 
 	do 
-        ./qsub_train.sh $shot $way $i
-        i=$((i+1))
+        	qsub -v shot=$shot,way=$way,flag=$i qsub_train.sh
+    		i=$((i+1))
 
 	done
 
