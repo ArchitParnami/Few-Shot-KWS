@@ -1,6 +1,7 @@
 shot=$1
 way=$2
 i=$3
+id=$4
 
 args="../run_train.py \
 		--data.dataset=googlespeech --data.way=$way --data.shot=$shot \
@@ -9,7 +10,7 @@ args="../run_train.py \
 		--model.model_name=protonet_conv --model.x_dim=1,51,40 --model.hid_dim=64 --model.z_dim=64 \
 		--train.epochs=200 --train.optim_method=Adam --train.learning_rate=0.001 --train.decay_every=20 \
 		--train.weight_decay=0.0 --train.patience=200  \
-		--log.exp_dir=. \
+		--log.exp_dir=./$id \
 		--data.cuda"
 
 if [ "$i" -gt "1" ]; then
