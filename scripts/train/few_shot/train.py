@@ -21,7 +21,7 @@ import time
 
 def main(opt):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    opt['log.exp_dir'] = os.path.join(opt['log.exp_dir'], 'results', timestamp)
+    opt['log.exp_dir'] = os.path.join('./results', opt['log.exp_dir'], timestamp)
     os.makedirs(opt['log.exp_dir'])
     
     # save opts
