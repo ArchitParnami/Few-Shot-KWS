@@ -44,8 +44,8 @@ def plot_results(result_dir):
     best_loss = min(val_loss)
     best_index = val_loss.index(best_loss)
     best_epoch = val_epochs[best_index]
-    min_loss = 'Best Loss = (Train : {:.2}, Val: {:.2})'.format(train_loss[best_epoch-1], best_loss)
-    max_acc = 'Best Accuracy = (Train : {:.2}, Val: {:.2})'.format(train_acc[best_epoch-1], val_acc[best_index])
+    min_loss = 'Best Loss = (Train : {:.4}, Val: {:.4})'.format(train_loss[best_epoch-1], best_loss)
+    max_acc = 'Best Accuracy = (Train : {:.4}, Val: {:.4})'.format(train_acc[best_epoch-1], val_acc[best_index])
     title = '{}\n{}\n{}'.format(data_opt, min_loss, max_acc)
     plt.title(title)
     plt.plot([best_epoch, best_epoch],[train_loss[best_epoch-1],best_loss], '--bo')
