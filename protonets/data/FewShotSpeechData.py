@@ -49,7 +49,7 @@ class FewShotSpeechDataset(TransformDataset):
     def load_background_data(self):
         background_path = os.path.join(self.data_dir, '..' , '_background_noise_', '*.wav')
         background_data = []
-        if self.use_background:
+        if self.use_background or self.silence:
             for wav_path in glob.glob(background_path):
                 bg_sound, bg_sr = torchaudio.load(wav_path)
                 background_data.append(bg_sound.flatten())
