@@ -1,17 +1,13 @@
 id=1
-
-for shot in 1 5 10 15 20
+for way in 2
 do
-
-	i=1
-	
-	for way in  2 2 3 4
-
+	for shot in  1 5 10
 	do 
-        	qsub -v shot=$shot,way=$way,flag=$i,id=$id qsub_train.sh
-    		i=$((i+1))
+        for i in 0 1 2 3 4 5 6 7
+        do
+            qsub -v way=$way,shot=$shot,flag=$i,id=$id qsub_train.sh
             id=$((id+1))
-
+        done
 	done
 
 

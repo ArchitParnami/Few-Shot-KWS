@@ -1,5 +1,5 @@
-shot=$1
-way=$2
+way=$1
+shot=$2
 i=$3
 id=$4
 
@@ -13,16 +13,31 @@ args="../run_train.py \
 		--log.exp_dir=./$id \
 		--data.cuda"
 
-if [ "$i" -gt "1" ]; then
+if [ "$i" -eq "1" ]; then
     args+=" --speech.include_background"
-fi
 
-if [ "$i" -gt "2" ]; then
+elif [ "$i" -eq "2" ]; then
     args+=" --speech.include_silence"
-fi
 
-if [ "$i" -gt "3" ]; then
+elif [ "$i" -eq "3" ]; then
     args+=" --speech.include_unknown"
+
+elif [ "$i" -eq "4" ]; then
+    args+=" --speech.include_background"
+    args+=" --speech.include_silence"
+
+elif [ "$i" -eq "5" ]; then
+    args+=" --speech.include_background"
+    args+=" --speech.include_unknown"
+
+elif [ "$i" -eq "6" ]; then
+    args+=" --speech.include_unknown"
+    args+=" --speech.include_silence"
+
+elif [ "$i" -eq "7" ]; then
+    args+=" --speech.include_background"
+    args+=" --speech.include_unknown"
+    args+=" --speech.include_silence"
 fi
 
 python $args

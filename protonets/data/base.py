@@ -57,7 +57,7 @@ class EpisodicSpeechBatchSampler(object):
 
     def __iter__(self):
         for i in range(self.n_episodes):
-            selected = torch.randperm(self.n_classes - self.skip)[:self.n_way - self.skip]
+            selected = torch.randperm(self.n_classes - self.skip)[:self.n_way]
 
             if self.include_silence:
                 silence_class = torch.tensor([self.n_classes - 2])
@@ -66,5 +66,5 @@ class EpisodicSpeechBatchSampler(object):
                 unknown_class = torch.tensor([self.n_classes - 1])
                 selected = torch.cat((selected, unknown_class))
 
-            yield selected[torch.randperm(self.n_way)]
+            yield selected[torch.randperm(self.n_way + self.skip)]
             
