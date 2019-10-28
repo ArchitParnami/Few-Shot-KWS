@@ -8,7 +8,7 @@
 #PBS -N FKS
 ### Specify the # of cpus for your job.
 #PBS -l nodes=1:ppn=1:gpus=1,mem=15GB
-#PBS -l walltime=479:59:59
+#PBS -l walltime=24:00:00
 ### pass the full environment
 #PBS -V
 #
