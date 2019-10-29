@@ -76,4 +76,9 @@ def read_results(root_dir):
 if __name__ == '__main__':
     result_root = sys.argv[1]
     df = read_results(result_root)
-    print(df)
+    if len(sys.argv) > 2:
+        output_file = sys.argv[2]
+        df.to_csv(output_file + '.csv', index=None, header=True)
+    else:
+        print(df)
+    
