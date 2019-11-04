@@ -11,7 +11,8 @@ args="../run_train.py \
 		--train.epochs=200 --train.optim_method=Adam --train.learning_rate=0.001 --train.decay_every=20 \
 		--train.weight_decay=0.0 --train.patience=200  \
 		--log.exp_dir=./$id \
-		--data.cuda"
+		--data.cuda \
+        --model.encoding=cnn-trad-fpool3"
 
 if [ "$i" -eq "1" ]; then
     args+=" --speech.include_background"
