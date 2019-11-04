@@ -137,7 +137,8 @@ class FewShotSpeechDataset(TransformDataset):
     
     def extract_features(self, k, d):
         features = self.mfcc(d[k])[0] # just one channel
-        d[k] = torch.unsqueeze(features.T,0)
+        features = features.T # f x t -> t x f
+        d[k] = torch.unsqueeze(features,0)
         return d
 
     def load_class_samples(self, d):

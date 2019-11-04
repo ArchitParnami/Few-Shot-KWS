@@ -5,15 +5,11 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 from protonets.models import register_model
+from protonets.models.encoder.default import C64
+from protonets.models.encoder.GoogleKWS import cnn_trad_fpool3
+
 
 from .utils import euclidean_dist
-
-class Flatten(nn.Module):
-    def __init__(self):
-        super(Flatten, self).__init__()
-
-    def forward(self, x):
-        return x.view(x.size(0), -1)
 
 class Protonet(nn.Module):
     def __init__(self, encoder):
@@ -59,26 +55,18 @@ class Protonet(nn.Module):
             'acc': acc_val.item()
         }
 
+
+def get_enocder(encoding, in_dim, hid_dim, out_dim):
+    if encoding == 'C64':
+        return C64(in_dim, hid_dim, out_dim)
+    elif encoding == 'cnn-trad-fpool3':
+        return cnn_trad_fpool3(in_dim, hid_dim, out_dim)
+
 @register_model('protonet_conv')
 def load_protonet_conv(**kwargs):
     x_dim = kwargs['x_dim']
     hid_dim = kwargs['hid_dim']
     z_dim = kwargs['z_dim']
-
-    def conv_block(in_channels, out_channels):
-        return nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, 3, padding=1),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
-        )
-
-    encoder = nn.Sequential(
-        conv_block(x_dim[0], hid_dim),
-        conv_block(hid_dim, hid_dim),
-        #conv_block(hid_dim, hid_dim),
-        conv_block(hid_dim, z_dim),
-        Flatten()
-    )
-
+    encoding = kwargs['encoding']
+    encoder = get_enocder(encoding, x_dim[0], hid_dim, z_dim)
     return Protonet(encoder)
