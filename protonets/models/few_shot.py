@@ -7,15 +7,17 @@ from torch.autograd import Variable
 from protonets.models import register_model
 from protonets.models.encoder.default import C64
 from protonets.models.encoder.GoogleKWS import cnn_trad_fpool3
-
+from protonets.models.encoder.TCResNet import TCResNet8
+#from torch.utils.tensorboard import SummaryWriter
 
 from .utils import euclidean_dist
 
 class Protonet(nn.Module):
-    def __init__(self, encoder):
+    def __init__(self, encoder, encoding):
         super(Protonet, self).__init__()
-        
-        self.encoder = encoder
+        #self.encoding = encoding
+        #self.encoder = encoder
+        #self.write = False
 
     def loss(self, sample):
         xs = Variable(sample['xs']) # support
@@ -35,6 +37,12 @@ class Protonet(nn.Module):
         x = torch.cat([xs.view(n_class * n_support, *xs.size()[2:]),
                        xq.view(n_class * n_query, *xq.size()[2:])], 0)
 
+        #if not self.write:
+            #writer = SummaryWriter('runs/{}'.format(self.encoding))
+            #writer.add_graph(self.encoder, x)
+            #writer.close()
+            #self.write = True
+        
         z = self.encoder.forward(x)
         z_dim = z.size(-1)
 
@@ -61,6 +69,8 @@ def get_enocder(encoding, in_dim, hid_dim, out_dim):
         return C64(in_dim, hid_dim, out_dim)
     elif encoding == 'cnn-trad-fpool3':
         return cnn_trad_fpool3(in_dim, hid_dim, out_dim)
+    elif encoding == 'TCResNet8':
+        return TCResNet8(1, 51, 40)
 
 @register_model('protonet_conv')
 def load_protonet_conv(**kwargs):
@@ -69,4 +79,4 @@ def load_protonet_conv(**kwargs):
     z_dim = kwargs['z_dim']
     encoding = kwargs['encoding']
     encoder = get_enocder(encoding, x_dim[0], hid_dim, z_dim)
-    return Protonet(encoder)
+    return Protonet(encoder, encoding)
