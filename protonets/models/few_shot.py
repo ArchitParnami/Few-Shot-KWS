@@ -16,7 +16,7 @@ class Protonet(nn.Module):
     def __init__(self, encoder, encoding):
         super(Protonet, self).__init__()
         #self.encoding = encoding
-        #self.encoder = encoder
+        self.encoder = encoder
         #self.write = False
 
     def loss(self, sample):
@@ -64,13 +64,13 @@ class Protonet(nn.Module):
         }
 
 
-def get_enocder(encoding, in_dim, hid_dim, out_dim):
+def get_enocder(encoding, x_dim, hid_dim, out_dim):
     if encoding == 'C64':
-        return C64(in_dim, hid_dim, out_dim)
+        return C64(x_dim[0], hid_dim, out_dim)
     elif encoding == 'cnn-trad-fpool3':
-        return cnn_trad_fpool3(in_dim, hid_dim, out_dim)
+        return cnn_trad_fpool3(x_dim[0], hid_dim, out_dim)
     elif encoding == 'TCResNet8':
-        return TCResNet8(1, 51, 40)
+        return TCResNet8(x_dim[0], x_dim[1], x_dim[2])
 
 @register_model('protonet_conv')
 def load_protonet_conv(**kwargs):
@@ -78,5 +78,5 @@ def load_protonet_conv(**kwargs):
     hid_dim = kwargs['hid_dim']
     z_dim = kwargs['z_dim']
     encoding = kwargs['encoding']
-    encoder = get_enocder(encoding, x_dim[0], hid_dim, z_dim)
+    encoder = get_enocder(encoding, x_dim, hid_dim, z_dim)
     return Protonet(encoder, encoding)
