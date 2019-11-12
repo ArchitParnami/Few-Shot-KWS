@@ -7,7 +7,7 @@ from torch.autograd import Variable
 from protonets.models import register_model
 from protonets.models.encoder.default import C64
 from protonets.models.encoder.GoogleKWS import cnn_trad_fpool3
-from protonets.models.encoder.TCResNet import TCResNet8
+from protonets.models.encoder.TCResNet import TCResNet8, TCResNet8Dilated
 #from torch.utils.tensorboard import SummaryWriter
 
 from .utils import euclidean_dist
@@ -71,6 +71,8 @@ def get_enocder(encoding, x_dim, hid_dim, out_dim):
         return cnn_trad_fpool3(x_dim[0], hid_dim, out_dim)
     elif encoding == 'TCResNet8':
         return TCResNet8(x_dim[0], x_dim[1], x_dim[2])
+    elif encoding == 'TCResNet8Dilated':
+        return TCResNet8Dilated(x_dim[0], x_dim[1], x_dim[2])
 
 @register_model('protonet_conv')
 def load_protonet_conv(**kwargs):
