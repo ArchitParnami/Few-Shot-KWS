@@ -48,7 +48,7 @@ def join_results(timestamp, opt, result):
            opt['speech.include_background'], opt['speech.include_silence'],
            opt['speech.include_unknown'], opt['train.epochs'], opt['train.learning_rate'], 
            opt['train.weight_decay'], result['train']['acc'], result['val']['acc'],
-           timestamp]
+           timestamp,opt['model.alpha'], opt['model.margin']]
     return row
     
 
@@ -58,7 +58,7 @@ def read_results(root_dir):
     columns = ['train.way', 'test.way', 'train.shot', 'test.shot',
                'train.query', 'test.query', 'train.episodes', 'test.episodes',
                'background', 'silence', 'unknown', 'epochs', 'lr', 'wd', 
-               'train.acc', 'val.acc', 'timestamp']
+               'train.acc', 'val.acc', 'timestamp','alpha', 'margin']
     df = pd.DataFrame(columns=columns)
 
     for i, result_dir in enumerate(dirs):
