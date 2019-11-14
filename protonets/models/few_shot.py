@@ -8,6 +8,7 @@ from protonets.models import register_model
 from protonets.models.encoder.default import C64
 from protonets.models.encoder.GoogleKWS import cnn_trad_fpool3
 from protonets.models.encoder.TCResNet import TCResNet8, TCResNet8Dilated
+from protonets.models.ProtonetsWithMargin import ProtonetWithMargin
 #from torch.utils.tensorboard import SummaryWriter
 
 from .utils import euclidean_dist
@@ -81,4 +82,5 @@ def load_protonet_conv(**kwargs):
     z_dim = kwargs['z_dim']
     encoding = kwargs['encoding']
     encoder = get_enocder(encoding, x_dim, hid_dim, z_dim)
-    return Protonet(encoder, encoding)
+    return ProtonetWithMargin(encoder, 
+            alpha=kwargs['alpha'], margin=kwargs['margin'])

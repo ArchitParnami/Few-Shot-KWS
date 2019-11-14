@@ -2,6 +2,8 @@ way=$1
 shot=$2
 i=$3
 id=$4
+alpha=$5
+margin=$6
 
 args="../run_train.py \
 		--data.dataset=googlespeech --data.way=$way --data.shot=$shot \
@@ -12,7 +14,9 @@ args="../run_train.py \
 		--train.weight_decay=0.0 --train.patience=200  \
 		--log.exp_dir=./$id \
 		--data.cuda \
-        --model.encoding=TCResNet8Dilated"
+        --model.alpha=$alpha
+        --model.margin=$margin
+        --model.encoding=TCResNet8"
 
 if [ "$i" -eq "1" ]; then
     args+=" --speech.include_background"

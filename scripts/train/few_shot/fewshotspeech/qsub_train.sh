@@ -19,6 +19,6 @@
 source activate pyenv
 
 cd $PBS_O_WORKDIR
-./train.sh "$way" "$shot" "$flag" "$id"
+./train.sh "$way" "$shot" "$flag" "$id" "$alpha" "$margin"
 
 conda deactivate

@@ -44,6 +44,11 @@ parser.add_argument('--model.z_dim', type=int, default=64, metavar='ZDIM',
                     help="dimensionality of input images (default: 64)")
 parser.add_argument('--model.encoding', type=str, default=default_encoding, metavar='MODELENC',
                     help="model encoding (default: {:s})".format(default_encoding))
+parser.add_argument('--model.alpha', type=float, metavar='ALPH',
+                    help='alpha parameter')
+parser.add_argument('--model.margin', type=float, metavar='MARG',
+                    help='margin parameter')
+
 # train args
 parser.add_argument('--train.epochs', type=int, default=10000, metavar='NEPOCHS',
                     help='number of epochs to train (default: 10000)')
