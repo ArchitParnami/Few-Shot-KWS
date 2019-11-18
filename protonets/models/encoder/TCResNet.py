@@ -14,14 +14,14 @@ class TC(nn.Module):
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self, in_channels, in_height, in_width, out_channels, kernel, dilation):
+    def __init__(self, in_channels, in_height, in_width, out_channels, kernel, dilation, stride=2):
         super(ResidualBlock, self).__init__()
         self.k_size = kernel
         self.stride2 = 1
         self.k_1D = (1,1)
         
         if in_channels != out_channels:
-            self.stride1 = 2
+            self.stride1 = stride
             self.upsample = True
         else:
             self.stride1 = 1
@@ -69,7 +69,7 @@ class ResidualBlock(nn.Module):
 
 class TCResNet(nn.Module):
     def __init__(self, in_channels, in_height, in_width, n_blocks, n_channels, 
-                 conv_kernel, res_kernel, dilation):
+                 conv_kernel, res_kernel, dilation, stride=2):
         super(TCResNet, self).__init__()
         self.conv_k_size = conv_kernel
         self.conv_stride = 1
@@ -82,18 +82,18 @@ class TCResNet(nn.Module):
                         d_h=dilation[0]), dilation = dilation[0])
        
         self.resnet = self.build_resnet(in_height, in_width, n_blocks, n_channels[1:], 
-                                        dilation[1:], res_kernel)
+                                        dilation[1:], res_kernel, stride)
         self.avg_pool = nn.AvgPool2d((in_height, in_width))
         self.flatten = Flatten()
 
-    def build_resnet(self,in_height, in_width, n_blocks, n_channels, dilation, res_kernel):
+    def build_resnet(self,in_height, in_width, n_blocks, n_channels, dilation, res_kernel, stride):
         res_blocks = []
         for i in range(n_blocks):
             input_channels = self.conv_channels if i == 0 else n_channels[i-1]
             output_channels = n_channels[i]
             res_blocks.append(('Res_{}'.format(i+1),
                                 ResidualBlock(input_channels, in_height, in_width, 
-                                              output_channels, res_kernel, dilation[i])))
+                                              output_channels, res_kernel, dilation[i], stride)))
         return nn.Sequential(OrderedDict(res_blocks))
 
     def forward(self, x):
@@ -133,4 +133,4 @@ def TCResNet8Dilated(in_c, in_h, in_w, width_multiplier=1.0):
     conv_kernel = (3,1)
     res_kernel = (7,1)
     dilation = [1,1,2,4]
-    return TCResNet(in_w, in_h, in_c, n_blocks, n_channels, conv_kernel, res_kernel, dilation)
+    return TCResNet(in_w, in_h, in_c, n_blocks, n_channels, conv_kernel, res_kernel, dilation, stride=1)
