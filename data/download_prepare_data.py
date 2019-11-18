@@ -286,7 +286,7 @@ if __name__ == '__main__':
     sample_rate = 16000
     clip_duration_ms = 1000
     speaker_limit = 1000
-    core_split = (24,3,3) # (train, val, test)
+    core_split = (20,5,5) # (train, val, test)
     unknown_split = (60, 20, 20) # in percentage
     random.seed(42)
     downloader = FewShotSpeechDataDownloader(data_url, dataset_path,
