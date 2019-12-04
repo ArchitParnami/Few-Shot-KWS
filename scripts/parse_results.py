@@ -41,7 +41,16 @@ def get_best_results(trace):
             'val'   : {'acc' : max_acc_val, 'loss' :min_loss_val},
             'epoch' : best_epoch}
 
-def join_results(timestamp, opt, result):
+def read_eval(eval_file):
+    if os.path.exists(eval_file):
+        with open(eval_file, 'r') as rf:
+            line = rf.readline()
+            test = ast.literal_eval(line)
+            return test['test']
+    else:
+        return None
+
+def join_results(timestamp, opt, result, test):
     row = [opt['data.way'], opt['data.test_way'], opt['data.shot'], 
            opt['data.test_shot'], opt['data.query'], opt['data.test_query'],
            opt['data.train_episodes'], opt['data.test_episodes'], 
@@ -49,16 +58,19 @@ def join_results(timestamp, opt, result):
            opt['speech.include_unknown'], opt['train.epochs'], opt['train.learning_rate'], 
            opt['train.weight_decay'], result['train']['acc'], result['val']['acc'],
            timestamp]
+    if test is not None:
+        row += [test['loss']['mean'], test['loss']['confidence'], 
+                test['acc']['mean'], test['acc']['confidence']]
     return row
     
-
-
 def read_results(root_dir):
     dirs = sorted(os.listdir(root_dir))
     columns = ['train.way', 'test.way', 'train.shot', 'test.shot',
                'train.query', 'test.query', 'train.episodes', 'test.episodes',
                'background', 'silence', 'unknown', 'epochs', 'lr', 'wd', 
-               'train.acc', 'val.acc', 'timestamp']
+               'train.acc', 'val.acc','timestamp', 
+               'test.loss.mean', 'test.loss.confidence',
+               'test.acc.mean', 'test.acc.confidence']
     df = pd.DataFrame(columns=columns)
 
     for i, result_dir in enumerate(dirs):
@@ -67,7 +79,8 @@ def read_results(root_dir):
         opt =read_opt(os.path.join(result_path, timestamp, 'opt.json'))
         trace = read_trace(os.path.join(result_path, timestamp, 'trace.txt'))
         result = get_best_results(trace)
-        row = join_results(timestamp, opt, result)
+        test = read_eval(os.path.join(result_path, timestamp, 'eval.txt'))
+        row = join_results(timestamp, opt, result, test)
         df.loc[i] = row
 
     return df
