@@ -1,0 +1,1 @@
+qsub -v result_dir=$1 qsub_eval.sh

@@ -1,6 +1,6 @@
 import os
 import sys
-from predict.few_shot.eval import main
+from eval import main
 import argparse
 
 def eval_model(model_path):
