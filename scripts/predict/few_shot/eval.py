@@ -27,20 +27,21 @@ def main(opt):
     # construct data
     data_opt = { 'data.' + k: v for k,v in filter_opt(model_opt, 'data').items() }
 
-    episode_fields = {
-        'data.test_way': 'data.way',
-        'data.test_shot': 'data.shot',
-        'data.test_query': 'data.query',
-        'data.test_episodes': 'data.train_episodes'
-    }
+    
+    # episode_fields = {
+    #     'data.test_way': 'data.way',
+    #     'data.test_shot': 'data.shot',
+    #     'data.test_query': 'data.query',
+    #     'data.test_episodes': 'data.train_episodes'
+    # }
 
-    for k,v in episode_fields.items():
-        if opt[k] != 0:
-            data_opt[k] = opt[k]
-        elif model_opt[k] != 0:
-            data_opt[k] = model_opt[k]
-        else:
-            data_opt[k] = model_opt[v]
+    # for k,v in episode_fields.items():
+    #     if opt[k] != 0:
+    #         data_opt[k] = opt[k]
+    #     elif model_opt[k] != 0:
+    #         data_opt[k] = model_opt[k]
+    #     else:
+    #         data_opt[k] = model_opt[v]
 
     print("Evaluating {:d}-way, {:d}-shot with {:d} query examples/class over {:d} episodes".format(
         data_opt['data.test_way'], data_opt['data.test_shot'],
@@ -50,7 +51,7 @@ def main(opt):
     if data_opt['data.cuda']:
         torch.cuda.manual_seed(1234)
 
-    data = data_utils.load(data_opt, ['test'])
+    data = data_utils.load(model_opt, ['test'])
 
     if data_opt['data.cuda']:
         model.cuda()
@@ -59,6 +60,14 @@ def main(opt):
 
     model_utils.evaluate(model, data['test'], meters, desc="test")
 
+    output = {"test" : {}}
     for field,meter in meters.items():
         mean, std = meter.value()
-        print("test {:s}: {:0.6f} +/- {:0.6f}".format(field, mean, 1.96 * std / math.sqrt(data_opt['data.test_episodes'])))
+        output["test"][field] = {}
+        output["test"][field]["mean"] = mean 
+        output["test"][field]["confidence"] = 1.96 * std / math.sqrt(data_opt['data.test_episodes'])
+        #print("test {:s}: {:0.6f} +/- {:0.6f}".format(field, mean, 1.96 * std / math.sqrt(data_opt['data.test_episodes'])))
+
+    output_file = os.path.join(os.path.dirname(opt['model.model_path']), 'eval.txt')
+    with open(output_file, 'w') as fp:
+        json.dump(output, fp)
