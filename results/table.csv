@@ -1,0 +1,16 @@
+core,cnn_trad_fpool3,69.23 $\pm$ 0.03,87.07 $\pm$ 0.02,48.83 $\pm$ 0.02,75.93 $\pm$ 0.01
+core,C64,77.2 $\pm$ 0.03,89.97 $\pm$ 0.02,62.63 $\pm$ 0.02,80.48 $\pm$ 0.01
+core,TCResNet8,82.7 $\pm$ 0.03,89.0 $\pm$ 0.02,69.47 $\pm$ 0.02,81.2 $\pm$ 0.01
+core,TCResNetDilated,85.43 $\pm$ 0.03,94.1 $\pm$ 0.01,75.22 $\pm$ 0.02,83.48 $\pm$ 0.02
+core + background,cnn_trad_fpool3,69.53 $\pm$ 0.04,86.8 $\pm$ 0.02,43.3 $\pm$ 0.02,67.42 $\pm$ 0.01
+core + background,C64,78.3 $\pm$ 0.03,90.03 $\pm$ 0.02,58.83 $\pm$ 0.02,80.52 $\pm$ 0.01
+core + background,TCResNet8,77.4 $\pm$ 0.03,91.4 $\pm$ 0.02,64.23 $\pm$ 0.02,79.25 $\pm$ 0.01
+core + background,TCResNetDilated,82.23 $\pm$ 0.03,91.0 $\pm$ 0.02,71.58 $\pm$ 0.02,85.65 $\pm$ 0.01
+core + unknown,cnn_trad_fpool3,58.33 $\pm$ 0.03,78.36 $\pm$ 0.02,50.15 $\pm$ 0.02,69.25 $\pm$ 0.01
+core + unknown,C64,63.42 $\pm$ 0.03,78.47 $\pm$ 0.02,53.69 $\pm$ 0.02,76.43 $\pm$ 0.01
+core + unknown,TCResNet8,68.84 $\pm$ 0.03,80.49 $\pm$ 0.02,59.08 $\pm$ 0.02,78.07 $\pm$ 0.01
+core + unknown,TCResNetDilated,77.24 $\pm$ 0.02,87.22 $\pm$ 0.01,70.45 $\pm$ 0.02,81.88 $\pm$ 0.01
+core + background + silence + unknown,cnn_trad_fpool3,67.43 $\pm$ 0.02,82.32 $\pm$ 0.01,53.51 $\pm$ 0.02,74.54 $\pm$ 0.01
+core + background + silence + unknown,C64,65.83 $\pm$ 0.02,81.15 $\pm$ 0.01,56.38 $\pm$ 0.01,73.2 $\pm$ 0.01
+core + background + silence + unknown,TCResNet8,78.63 $\pm$ 0.02,85.98 $\pm$ 0.01,63.37 $\pm$ 0.02,80.39 $\pm$ 0.01
+core + background + silence + unknown,TCResNetDilated,82.77 $\pm$ 0.02,89.45 $\pm$ 0.01,69.34 $\pm$ 0.01,82.5 $\pm$ 0.01
