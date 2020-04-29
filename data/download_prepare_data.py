@@ -42,33 +42,32 @@ class FewShotSpeechDataDownloader(object):
         return sound, sr
 
     def maybe_download_and_extract_dataset(self):
-        """Download and extract data set tar file.
-        
-        If the data set we're using doesn't already exist, this function
-        downloads it from the TensorFlow.org website and unpacks it into a
-        directory.
-
-        If the data_url is none, don't download anything and expect the data
-        directory to contain the correct files already.
-
-        Args:
-        data_url: Web location of the tar file containing the data set.
-        dest_directory: File path to extract data to.
-        """
         if not self.data_url:
             return
-        if not os.path.exists(self.dataset_path):
-            os.makedirs(self.dataset_path)
+
+        if os.path.exists(self.dataset_path):
+            print('Found the dataset directory {}.'.format(self.dataset_path))
         else:
-            print('{} already exists. Please specify a new path'.format(self.dataset_path))
-            exit()
+            os.makedirs(self.dataset_path)
+            
         filename = self.data_url.split('/')[-1]
         filepath = os.path.join(self.dataset_path, filename)
-        if not os.path.exists(filepath):
+        
+        if os.path.exists(filepath):
+            print('Found the dataset {}. Skipping download'.format(filepath))
+            print('Resetting the state by removing old files.')
+            for item in os.listdir(self.dataset_path):
+                itempath = os.path.join(self.dataset_path, item)
+                if itempath != filepath:
+                    if os.path.isdir(itempath):
+                        shutil.rmtree(itempath)
+                    else:
+                        os.unlink(itempath)
+        else:
 
             def _progress(count, block_size, total_size):
                 sys.stdout.write(
-                    '\r>> Downloading %s %.1f%%' %
+                    '\r--> Downloading %s %.1f%%' %
                     (filename, float(count * block_size) / float(total_size) * 100.0))
                 sys.stdout.flush()
 
@@ -81,11 +80,15 @@ class FewShotSpeechDataDownloader(object):
                     'Please make sure you have enough free space and'
                     ' an internet connection')
                 raise
+
             print()
             statinfo = os.stat(filepath)
             print('Successfully downloaded %s (%d bytes)',
                                         filename, statinfo.st_size)
-            tarfile.open(filepath, 'r:gz').extractall(self.dataset_path)
+                
+        
+        print('Extracting the dataset....')
+        tarfile.open(filepath, 'r:gz').extractall(self.dataset_path)
 
     def delete_smaller_files(self):
         print("Scanning files..")
@@ -93,18 +96,18 @@ class FewShotSpeechDataDownloader(object):
         count = 0
         total = 0
         for keyword in keywords:
-            keyword_wavs = os.path.join(self.dataset_path, keyword, '*.wav')
+            keyword_wavs = glob.glob(os.path.join(self.dataset_path, keyword, '*.wav'))
             total += len(keyword_wavs)
-            for wav_file in sorted(glob.glob(keyword_wavs)):
+            for wav_file in sorted(keyword_wavs):
                 sound, sr = self.load_audio(wav_file, self.desired_samples)
                 if sound.shape[1] != self.desired_samples:
                     os.unlink(wav_file)
                     count += 1
-        print("{} smaller files deleted".format(count))
-        print("{} files retained".format(total-count))
+        print("{} samples with audio < 1 second removed".format(count))
+        print("{} samples retained".format(total-count))
     
     def group_by_author(self):
-        print("Grouping wave files by author..")
+        print("Grouping audio samples by speakers ..")
         path = self.dataset_path
         items = os.listdir(path)
         for item in items:
@@ -148,8 +151,13 @@ class FewShotSpeechDataDownloader(object):
     def analyze_data(self):
         stats = self.keyword_stats()
         stats.sort(key=lambda stat: stat[1], reverse=True)
+        print()
+        print('=' * 30)
         header = '{:8s} {:7s} {:3s} {:3s} {:3s}'.format("Word", "Speakers", "Min", "Max", "Mean")
-        print('\n' + header + '\n')
+        print(header)
+        print('=' * 30)
+        print()
+        
 
         core = []; other = []
         min_core = float('inf')
@@ -158,11 +166,11 @@ class FewShotSpeechDataDownloader(object):
         for stat in stats:
             word, num_speakers, min_samples, max_samples, mean_samples = stat
             if num_speakers >= self.speaker_limit:
-                core.append(word + '\n')
+                core.append(word)
                 if num_speakers < min_core:
                     min_core = num_speakers
             else:
-                other.append(word +  '\n')
+                other.append(word)
                 if num_speakers < min_other:
                     min_other = num_speakers
 
@@ -171,17 +179,20 @@ class FewShotSpeechDataDownloader(object):
 
         print()
         with open(self.core_words_path, 'w') as wf:
-            wf.writelines(core)
-            print('Words with speakers >= {} saved to file {}'.format(speaker_limit, self.core_words_path))
-            print('Min core word speakers = ', min_core)
+            wf.writelines([word + '\n' for word in core])
+            #print('Words with speakers >= {} saved to file {}'.format(speaker_limit, self.core_words_path))
+            #print('Min core word speakers = ', min_core)
             self.num_core_speakers = min_core
 
         with open(self.other_words_path, 'w') as wf:
-            wf.writelines(other)
-            print('Other saved to {}'.format(self.other_words_path))
-            print('Min other word speakers = ', min_other)
+            wf.writelines([word + '\n' for word in other])
+            #print('Other saved to {}'.format(self.other_words_path))
+            #print('Min other word speakers = ', min_other)
             self.num_unknown_speakers = min_other
-        print()
+        
+        print('Core Words ({}): {}\n'.format(len(core), core))
+        print('Unknown Words ({}): {}'.format(len(other), other))
+
 
     def filter_dataset(self, path, new_path, words, num_speakers):
         os.makedirs(new_path)
@@ -201,7 +212,7 @@ class FewShotSpeechDataDownloader(object):
             shutil.rmtree(item_path)
     
     def uniform_data(self):
-        print('Making data uniform with respect to number of samples per keyword')
+        print('Making data uniform with respect to number of samples per keyword..')
         with open(self.core_words_path, 'r') as rf:
             core_words = [line.strip('\n') for line in rf.readlines()]
         with open(self.other_words_path, 'r') as rf:
@@ -260,28 +271,45 @@ class FewShotSpeechDataDownloader(object):
         self.generate_unknown_split()
     
     def remove_unwanted_files(self):
-        print('Cleaning up.')
+        #print('Cleaning up.')
         files = ['LICENSE', 'README.md', 'testing_list.txt', 
         'validation_list.txt', 'core_words.txt', 'other_words.txt']
         for file_name in files:
             file_path = os.path.join(self.dataset_path, file_name)
             if os.path.exists(file_path):
                 os.unlink(file_path)
-        print("You may delete the tar file now.")
+        #print("You may delete the tar file now.")
 
     def run(self):
+        
+        print("\n>> Downloading Google Speech Command Dataset")
+
         self.maybe_download_and_extract_dataset()
+        
+        print("\n>> Preparing Few-Shot Speech Command Dataset")
+        
+        print("\n--> 1/6 Filtering")
         self.delete_smaller_files()
+        
+        print("\n--> 2/6 Grouping")
         self.group_by_author()
+        
+        print("\n--> 3/6 Analyzing")
         self.analyze_data()
+        
+        print("\n--> 4/6 Balancing")
         self.uniform_data()
+
+        print("\n--> 5/6 Splitting")
         self.generate_splits()
+
+        print("\n--> 6/6 Cleaning up")
         self.remove_unwanted_files()
-        print('All done.')
+        print('\nAll done.')
 
 
 if __name__ == '__main__':
-    data_url =  'https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz'
+    data_url =  'http://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz'
     dataset_path = os.path.join(os.curdir, 'speech_commands')
     sample_rate = 16000
     clip_duration_ms = 1000
