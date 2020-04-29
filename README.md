@@ -1,3 +1,8 @@
+Code Repository for the paper "Few-Shot Keyword Spotting with Prototypical Networks".
+
+![Few-Shot Keyword Spotting Pipeline](figures/Pipeline.png)
+
+
 # Installation
 
 1. Clone the repository:  
@@ -79,6 +84,6 @@ python eval_results.py ../../train/few_shot/fewshotspeech/results/
 
 The evaluation can be found in:  
 ```
-cat Few-Shot-KWS/scripts/train/few-shot/fewshotspeech/results/[experiment-id]/[timestamp]/eval.txt
+cat Few-Shot-KWS/scripts/train/few-shot/fewshotspeech/results/[exp-id]/[timestamp]/eval.txt
 ```
 
