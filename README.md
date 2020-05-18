@@ -87,3 +87,20 @@ The evaluation can be found in:
 cat Few-Shot-KWS/scripts/train/few-shot/fewshotspeech/results/[exp-id]/[timestamp]/eval.txt
 ```
 
+# Results
+
+Comaring test accuracy of different embedding networks on 4-way FS-KWS as we increase the number of support examples. The results are presented for four different cases discussed in the paper.
+
+![](results/performance-Core.png) ![](results/performance-Core+Background.png)
+
+![](results/performance-Core+Unknown.png) ![](results/performance-Core+Unknown+Background+Silence.png)
+
+
+# References
+
+The code in this repository has been adapted from:
+
+1. https://github.com/jakesnell/prototypical-networks
+2. https://github.com/hyperconnect/TC-ResNet
+
+
