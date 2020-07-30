@@ -104,3 +104,15 @@ The code in this repository has been adapted from:
 2. https://github.com/hyperconnect/TC-ResNet
 3. https://github.com/tensorflow/docs/blob/master/site/en/r1/tutorials/sequences/audio_recognition.md
 
+
+# Citation
+```
+@misc{parnami2020fewshot,
+    title={Few-Shot Keyword Spotting With Prototypical Networks},
+    author={Archit Parnami and Minwoo Lee},
+    year={2020},
+    eprint={2007.14463},
+    archivePrefix={arXiv},
+    primaryClass={eess.AS}
+}
+```
