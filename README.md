@@ -1,4 +1,4 @@
-Code Repository for the paper "Few-Shot Keyword Spotting with Prototypical Networks".
+Code Repository for the paper [Few-Shot Keyword Spotting with Prototypical Networks](https://arxiv.org/abs/2007.14463).
 
 ![Few-Shot Keyword Spotting Pipeline](figures/Pipeline.png)
 
