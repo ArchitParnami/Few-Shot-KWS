@@ -37,7 +37,7 @@ class FewShotSpeechDataDownloader(object):
 
 
     def load_audio(self, audio_file, desired_samples):
-        sound, sr = torchaudio.load(filepath=audio_file, normalization=True,
+        sound, sr = torchaudio.load(filepath=audio_file, normalize=True,
                                          num_frames=desired_samples)
         return sound, sr
 
